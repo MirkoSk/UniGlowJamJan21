@@ -8,6 +8,9 @@ public class CharacterController : MonoBehaviour
     [SerializeField] float movementSpeed = 10f;
     [SerializeField] float jumpForce = 10f;
 
+    [Header("Chain Movement")]
+    [SerializeField] float attachMoveSpeed = 30f;
+
     [Header("Tweaks")]
     [SerializeField] float fallDownGravityMultiplier = 2f;
     [SerializeField] float lowJumpGravityMultiplier = 2f;
@@ -19,6 +22,8 @@ public class CharacterController : MonoBehaviour
     bool jumpPressed;
     bool jumpBeingPressed;
     bool grounded;
+    bool swinging;
+    Vector3 swingTarget;
 
 
     void Awake()
@@ -41,6 +46,12 @@ public class CharacterController : MonoBehaviour
     {
         rigidbody.gravityScale = 1f;
 
+        if (swinging)
+        {
+            if (transform.position.x > swingTarget.x - 1f) swinging = false;
+            else return;
+        }
+
         rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
 
         grounded = GroundCheck();
@@ -62,6 +73,13 @@ public class CharacterController : MonoBehaviour
     }
 
 
+
+    public void MoveToAttachmentPoint(Vector3 position)
+    {
+        rigidbody.AddForce((position - transform.position).normalized * attachMoveSpeed, ForceMode2D.Impulse);
+        swingTarget = position;
+        swinging = true;
+    }
 
     void Jump()
     {
