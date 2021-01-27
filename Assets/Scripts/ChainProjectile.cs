@@ -17,6 +17,9 @@ public class ChainProjectile : MonoBehaviour
     [Tooltip("Max length of the chain in unity units.")]
     [SerializeField] float chainLength = 5f;
 
+    [Header("References")]
+    [SerializeField] LineRenderer lineRenderer = null;
+
     new Rigidbody2D rigidbody;
     CharacterController player;
     float lifeTime;
@@ -37,6 +40,7 @@ public class ChainProjectile : MonoBehaviour
     private void Update()
     {
         lifeTime += Time.deltaTime;
+        lineRenderer.SetPosition(1, transform.position);
 
         if (movementSpeed * lifeTime >= chainLength)
         {
@@ -62,5 +66,9 @@ public class ChainProjectile : MonoBehaviour
         // Apply velocity
         if (player.FacingRight) rigidbody.velocity = directionVector * movementSpeed;
         else rigidbody.velocity = new Vector2(-directionVector.x, directionVector.y) * movementSpeed;
+
+        // Setup LineRenderer
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, transform.position);
     }
 }
