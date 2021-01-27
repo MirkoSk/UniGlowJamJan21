@@ -68,10 +68,12 @@ public class WombatController : MonoBehaviour
     {
         rigidbody.gravityScale = 1f;
 
-        // Movement controls
-        if (!chain || !chain.Attached) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
+        // Movement controls on ground
+        if (grounded) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
+        // TODO: Movement controls in air
+        else if (false) ;
         // Attached movement controls
-        else if (chain && chain.Attached) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
+        else if (chain && chain.Attached && !chain.ChainButtonBeingPressed) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
 
         grounded = GroundCheck();
 
@@ -91,7 +93,9 @@ public class WombatController : MonoBehaviour
             rigidbody.gravityScale = lowJumpGravityMultiplier;
         }
 
+        // Limit max velocity
         if (rigidbody.velocity.magnitude > maxVelocity) rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
+
         jumpPressed = false;
     }
 

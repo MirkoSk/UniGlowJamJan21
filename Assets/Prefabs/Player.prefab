@@ -145,10 +145,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd32e71c57b7ae4d93395b297caad94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 10
-  jumpForce: 12
+  movementSpeed: 5
+  jumpForce: 8
   maxVelocity: 17
-  attachmentPull: 30
+  attachedMoveForce: 5
   fallDownGravityMultiplier: 2
   lowJumpGravityMultiplier: 2
   layerMask:

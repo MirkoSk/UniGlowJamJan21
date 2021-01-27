@@ -14,10 +14,16 @@ public class Chain : MonoBehaviour
         Down
     }
 
+    [Header("Projectile")]
     [SerializeField] float movementSpeed = 20f;
     [Tooltip("Max length of the chain in unity units.")]
     [SerializeField] float chainLength = 5f;
-    [SerializeField] float attachmentPullSpeed = 0.2f;
+
+    [Header("Chain Controls")]
+    [SerializeField] float attachmentPullSpeed = 2f;
+    [SerializeField] float chainBreakDistance = 0.5f;
+    [SerializeField] float chainBreakSpeed = 1f;
+    [SerializeField] float chainBreakSpeedDuration = 1f;
 
     [Header("References")]
     [SerializeField] LineRenderer lineRenderer = null;
@@ -30,9 +36,12 @@ public class Chain : MonoBehaviour
     Vector3 attachmentPoint;
     ChainThrower chainOrigin;
     bool chainButtonBeingPressed;
+    bool playerStandingStill;
+    float timeStandingStill;
 
     public bool Attached { get { return attached; } }
     public Vector3 AttachmentPoint { get { return attachmentPoint; } }
+    public bool ChainButtonBeingPressed { get { return chainButtonBeingPressed; } }
 
     
     void Awake()
@@ -76,10 +85,29 @@ public class Chain : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Move to attachment point
-        if (chainButtonBeingPressed && attached)
+        if (attached)
         {
-            hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y - attachmentPullSpeed, Vector2.Distance(chainOrigin.transform.position, player.transform.position), Mathf.Infinity));
+            // Detach conditions
+            if (player.Rigidbody.velocity.magnitude <= chainBreakSpeed)
+            {
+                timeStandingStill += Time.deltaTime;
+                if (timeStandingStill >= chainBreakSpeedDuration) playerStandingStill = true;
+            }
+            else timeStandingStill = 0f;
+
+            if (Vector2.Distance(chainOrigin.transform.position, transform.position) <= chainBreakDistance
+                || playerStandingStill)
+            {
+                GameEvents.DetachPlayer();
+                Detach();
+            }
+
+            // Move to attachment point
+            if (chainButtonBeingPressed)
+            {
+                float chainOriginOffset = Vector2.Distance(chainOrigin.transform.position, player.transform.position);
+                hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y - attachmentPullSpeed * Time.deltaTime, chainOriginOffset, Mathf.Infinity));
+            }
         }
     }
 

@@ -178,7 +178,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 30
   chainLength: 8
-  attachmentPullSpeed: 0.1
+  attachmentPullSpeed: 13
+  chainBreakDistance: 0.2
+  chainBreakSpeed: 2
+  chainBreakSpeedDuration: 0.5
   lineRenderer: {fileID: 3868084791272008951}
   hingeJoint: {fileID: 362949936811156296}
 --- !u!50 &8644921717345090927
