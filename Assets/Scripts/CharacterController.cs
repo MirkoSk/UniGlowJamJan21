@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniGlow;
 
+[SelectionBase]
 public class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
@@ -24,6 +26,10 @@ public class CharacterController : MonoBehaviour
     bool grounded;
     bool swinging;
     Vector3 swingTarget;
+    bool facingRight = true;
+
+    public bool FacingRight { get { return facingRight; } }
+
 
 
     void Awake()
@@ -34,11 +40,13 @@ public class CharacterController : MonoBehaviour
 
     void Update()
     {
-        horizontal = Input.GetAxis("Horizontal");
+        horizontal = Input.GetAxis(Constants.INPUT_HORIZONTAL);
+        if (facingRight && horizontal < 0) Flip();
+        else if (!facingRight && horizontal > 0) Flip();
 
-        if (Input.GetButtonDown("Jump")) jumpPressed = true;
+        if (Input.GetButtonDown(Constants.INPUT_JUMP)) jumpPressed = true;
 
-        if (Input.GetButton("Jump")) jumpBeingPressed = true;
+        if (Input.GetButton(Constants.INPUT_JUMP)) jumpBeingPressed = true;
         else jumpBeingPressed = false;
     }
 
@@ -101,5 +109,11 @@ public class CharacterController : MonoBehaviour
             Debug.DrawLine(transform.position, transform.position + Vector3.down * 0.1f, Color.red);
             return false;
         }
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 }
