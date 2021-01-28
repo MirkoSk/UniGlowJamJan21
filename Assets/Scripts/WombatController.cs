@@ -11,6 +11,8 @@ public class WombatController : MonoBehaviour
     [SerializeField] float jumpForce = 10f;
     [SerializeField] float midairMovementSpeed = 40f;
     [SerializeField] float maxVelocity = 10f;
+    [Range(0f, 0.5f)]
+    [SerializeField] float airFriction = 0.05f;
 
     [Header("Chain Movement")]
     [SerializeField] float attachedMoveForce = 5f;
@@ -83,6 +85,9 @@ public class WombatController : MonoBehaviour
         // Movement controls mid-air
         else if (!grounded && !(chain && chain.Attached))
         {
+            // Apply air friction
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x * (1- airFriction), rigidbody.velocity.y);
+
             Vector2 newVelocity = rigidbody.velocity;
             // This ensures the player can control himself in midair, but not over the movementSpeed limit
             // External sources however (hook) can push the player up to his maxVelocity

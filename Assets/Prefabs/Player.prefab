@@ -176,10 +176,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd32e71c57b7ae4d93395b297caad94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 7
+  movementSpeed: 10
   jumpForce: 8
-  midairMovementSpeed: 7
+  midairMovementSpeed: 10
   maxVelocity: 30
+  airFriction: 0.05
   attachedMoveForce: 10
   damageRecoil: {x: 5, y: 10}
   invincibilityDuration: 1
