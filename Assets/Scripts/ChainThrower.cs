@@ -1,20 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniGlow;
+using UniGlow.Utility;
 
 public class ChainThrower : MonoBehaviour
 {
     [SerializeField] GameObject chainPrefab = null;
-    [SerializeField] CharacterController characterController = null;
+    [SerializeField] WombatController characterController = null;
 
     Vector2 inputDirection;
     float inputAngle;
+    Chain chain;
 
 
-    void Start()
+    private void OnEnable()
     {
-        
+        GameEvents.PlayerDetached += HandlePlayerDetach;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.PlayerDetached -= HandlePlayerDetach;
     }
 
     // Update is called once per frame
@@ -25,16 +31,23 @@ public class ChainThrower : MonoBehaviour
         inputDirection = inputDirection.normalized;
         inputAngle = Vector2.Angle(Vector2.up, inputDirection);
 
-        if (Input.GetButtonDown(Constants.INPUT_CHAIN))
+        if (Input.GetButtonDown(Constants.INPUT_CHAIN) && chain == null)
         {
-            GameObject chain = Instantiate(chainPrefab, transform.position, Quaternion.identity);
+            chain = Instantiate(chainPrefab, transform.position, Quaternion.identity).GetComponent<Chain>();
 
             // Calculate shot direction
-            if (inputAngle <= 22.5f) chain.GetComponent<ChainProjectile>().Initialize(characterController, ChainProjectile.Direction.Up);
-            else if (inputAngle > 22.5f && inputAngle < 67.5f) chain.GetComponent<ChainProjectile>().Initialize(characterController, ChainProjectile.Direction.UpDiagonal);
-            else if (inputAngle >= 67.5f && inputAngle <= 112.5f) chain.GetComponent<ChainProjectile>().Initialize(characterController, ChainProjectile.Direction.Straight);
-            else if (inputAngle > 112.5f && inputAngle < 157.5f) chain.GetComponent<ChainProjectile>().Initialize(characterController, ChainProjectile.Direction.DownDiagonal);
-            else if (inputAngle >= 157.5f) chain.GetComponent<ChainProjectile>().Initialize(characterController, ChainProjectile.Direction.Down);
+            if (inputAngle < 17.5f) chain.Initialize(characterController, this, Chain.Direction.Up);
+            else if (inputAngle >= 17.5f && inputAngle <= 72.5f) chain.Initialize(characterController, this, Chain.Direction.UpDiagonal);
+            else if (inputAngle > 72.5f && inputAngle < 107.5f) chain.Initialize(characterController, this, Chain.Direction.Straight);
+            else if (inputAngle >= 107.5f && inputAngle <= 162.5f) chain.Initialize(characterController, this, Chain.Direction.DownDiagonal);
+            else if (inputAngle > 162.5f) chain.Initialize(characterController, this, Chain.Direction.Down);
         }
+    }
+
+
+
+    void HandlePlayerDetach()
+    {
+        chain = null;
     }
 }

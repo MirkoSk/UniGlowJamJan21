@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniGlow;
+using UniGlow.Utility;
 
 [SelectionBase]
-public class CharacterController : MonoBehaviour
+public class WombatController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] float movementSpeed = 10f;
     [SerializeField] float jumpForce = 10f;
+    [SerializeField] float maxVelocity = 10f;
 
     [Header("Chain Movement")]
-    [SerializeField] float attachMoveSpeed = 30f;
+    [SerializeField] float attachedMoveForce = 5f;
 
     [Header("Tweaks")]
     [SerializeField] float fallDownGravityMultiplier = 2f;
@@ -24,11 +25,12 @@ public class CharacterController : MonoBehaviour
     bool jumpPressed;
     bool jumpBeingPressed;
     bool grounded;
-    bool swinging;
-    Vector3 swingTarget;
     bool facingRight = true;
+    Chain chain;
 
+    public Rigidbody2D Rigidbody { get { return rigidbody; } }
     public bool FacingRight { get { return facingRight; } }
+    public Chain Chain { get { return chain; } set { chain = value; } }
 
 
 
@@ -36,6 +38,18 @@ public class CharacterController : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.gravityScale = 1f;
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.PlayerAttached += HandlePlayerAttach;
+        GameEvents.PlayerDetached += HandlePlayerDetach;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.PlayerAttached -= HandlePlayerAttach;
+        GameEvents.PlayerDetached -= HandlePlayerDetach;
     }
 
     void Update()
@@ -54,19 +68,19 @@ public class CharacterController : MonoBehaviour
     {
         rigidbody.gravityScale = 1f;
 
-        if (swinging)
-        {
-            if (transform.position.x > swingTarget.x - 1f) swinging = false;
-            else return;
-        }
-
-        rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
+        // Movement controls on ground
+        if (grounded) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
+        // TODO: Movement controls in air
+        else if (false) ;
+        // Attached movement controls
+        else if (chain && chain.Attached && !chain.ChainButtonBeingPressed) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
 
         grounded = GroundCheck();
 
-        if (jumpPressed && grounded)
+        if (jumpPressed && (grounded || (chain && chain.Attached)))
         {
             Jump();
+            if (chain && chain.Attached) GameEvents.DetachPlayer();
         }
 
         // Better jumping with 4 lines of code
@@ -78,21 +92,18 @@ public class CharacterController : MonoBehaviour
         {
             rigidbody.gravityScale = lowJumpGravityMultiplier;
         }
+
+        // Limit max velocity
+        if (rigidbody.velocity.magnitude > maxVelocity) rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
+
+        jumpPressed = false;
     }
 
 
-
-    public void MoveToAttachmentPoint(Vector3 position)
-    {
-        rigidbody.AddForce((position - transform.position).normalized * attachMoveSpeed, ForceMode2D.Impulse);
-        swingTarget = position;
-        swinging = true;
-    }
 
     void Jump()
     {
-        rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        jumpPressed = false;
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y + jumpForce);
     }
 
     bool GroundCheck()
@@ -115,5 +126,16 @@ public class CharacterController : MonoBehaviour
     {
         facingRight = !facingRight;
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+    }
+
+    void HandlePlayerAttach(Vector3 position)
+    {
+        rigidbody.freezeRotation = false;
+    }
+
+    void HandlePlayerDetach()
+    {
+        rigidbody.freezeRotation = true;
+        transform.rotation = Quaternion.identity;
     }
 }

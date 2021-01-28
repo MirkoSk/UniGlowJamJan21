@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UniGlow
+namespace UniGlow.Utility
 {
 	public class Constants
 	{
