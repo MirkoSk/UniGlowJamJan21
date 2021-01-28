@@ -35,18 +35,20 @@ public class ChainThrower : MonoBehaviour
         {
             chain = Instantiate(chainPrefab, transform.position, Quaternion.identity).GetComponent<Chain>();
 
-            // Calculate shot direction
-            if (inputAngle < 17.5f) chain.Initialize(characterController, this, Chain.Direction.Up);
-            else if (inputAngle >= 17.5f && inputAngle <= 72.5f) chain.Initialize(characterController, this, Chain.Direction.UpDiagonal);
-            else if (inputAngle > 72.5f && inputAngle < 107.5f) chain.Initialize(characterController, this, Chain.Direction.Straight);
-            else if (inputAngle >= 107.5f && inputAngle <= 162.5f) chain.Initialize(characterController, this, Chain.Direction.DownDiagonal);
-            else if (inputAngle > 162.5f) chain.Initialize(characterController, this, Chain.Direction.Down);
+            // Calculate shot direction (8-ways)
+            //if (inputAngle < 17.5f) chain.Initialize(characterController, this, Chain.Direction.Up);
+            //else if (inputAngle >= 17.5f && inputAngle <= 72.5f) chain.Initialize(characterController, this, Chain.Direction.UpDiagonal);
+            //else if (inputAngle > 72.5f && inputAngle < 107.5f) chain.Initialize(characterController, this, Chain.Direction.Straight);
+            //else if (inputAngle >= 107.5f && inputAngle <= 162.5f) chain.Initialize(characterController, this, Chain.Direction.DownDiagonal);
+            //else if (inputAngle > 162.5f) chain.Initialize(characterController, this, Chain.Direction.Down);
+
+            chain.Initialize(characterController, this, inputDirection);
         }
     }
 
 
 
-    void HandlePlayerDetach()
+    void HandlePlayerDetach(Vector2 detachForce)
     {
         chain = null;
     }

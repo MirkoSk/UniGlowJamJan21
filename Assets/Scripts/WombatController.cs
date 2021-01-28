@@ -11,9 +11,15 @@ public class WombatController : MonoBehaviour
     [SerializeField] float jumpForce = 10f;
     [SerializeField] float midairMovementSpeed = 40f;
     [SerializeField] float maxVelocity = 10f;
+    [Range(0f, 0.5f)]
+    [SerializeField] float airFriction = 0.05f;
 
     [Header("Chain Movement")]
     [SerializeField] float attachedMoveForce = 5f;
+
+    [Header("Damage")]
+    [SerializeField] Vector2 damageRecoil = new Vector2();
+    [SerializeField] float invincibilityDuration = 1f;
 
     [Header("Tweaks")]
     [SerializeField] float fallDownGravityMultiplier = 2f;
@@ -28,6 +34,8 @@ public class WombatController : MonoBehaviour
     bool grounded;
     bool facingRight = true;
     Chain chain;
+    bool takingDamage;
+    float invincibilityTimer;
 
     public Rigidbody2D Rigidbody { get { return rigidbody; } }
     public bool FacingRight { get { return facingRight; } }
@@ -63,6 +71,9 @@ public class WombatController : MonoBehaviour
 
         if (Input.GetButton(Constants.INPUT_JUMP)) jumpBeingPressed = true;
         else jumpBeingPressed = false;
+
+        if (takingDamage) invincibilityTimer += Time.deltaTime;
+        if (invincibilityTimer >= invincibilityDuration) takingDamage = false;
     }
 
     private void FixedUpdate()
@@ -70,14 +81,24 @@ public class WombatController : MonoBehaviour
         rigidbody.gravityScale = 1f;
 
         // Movement controls on ground
-        if (grounded) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
+        if (grounded && !takingDamage) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
         // Movement controls mid-air
         else if (!grounded && !(chain && chain.Attached))
         {
+            // Apply air friction
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x * (1- airFriction), rigidbody.velocity.y);
+
             Vector2 newVelocity = rigidbody.velocity;
-            newVelocity.x = rigidbody.velocity.x + horizontal * midairMovementSpeed;
-            newVelocity.x = Mathf.Clamp(newVelocity.x, -movementSpeed, movementSpeed);
-            rigidbody.velocity = newVelocity;
+            // This ensures the player can control himself in midair, but not over the movementSpeed limit
+            // External sources however (hook) can push the player up to his maxVelocity
+            if ((rigidbody.velocity.x >= movementSpeed && horizontal < 0)
+                || (rigidbody.velocity.x <= -movementSpeed && horizontal > 0)
+                || (rigidbody.velocity.x >= 0 && rigidbody.velocity.x <= movementSpeed)
+                || (rigidbody.velocity.x < 0 && rigidbody.velocity.x >= -movementSpeed))
+            {
+                newVelocity.x = Mathf.Clamp(rigidbody.velocity.x + horizontal * midairMovementSpeed, -movementSpeed, movementSpeed);
+                rigidbody.velocity = newVelocity;
+            }
         }
         // Attached movement controls
         else if (chain && chain.Attached && !chain.ChainButtonBeingPressed) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
@@ -87,7 +108,7 @@ public class WombatController : MonoBehaviour
         if (jumpPressed && (grounded || (chain && chain.Attached)))
         {
             Jump();
-            if (chain && chain.Attached) GameEvents.DetachPlayer();
+            if (chain && chain.Attached) GameEvents.DetachPlayer(Vector3.zero);
         }
 
         // Better jumping with 4 lines of code
@@ -104,6 +125,21 @@ public class WombatController : MonoBehaviour
         if (rigidbody.velocity.magnitude > maxVelocity) rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
 
         jumpPressed = false;
+    }
+
+
+
+    public void TakeDamage(Vector3 enemyPosition)
+    {
+        // Calculate recoil direction
+        Vector2 recoilDirection = new Vector2();
+        if (enemyPosition.x >= transform.position.x) recoilDirection.x = -damageRecoil.x;
+        else recoilDirection.x = damageRecoil.x;
+        recoilDirection.y = damageRecoil.y;
+        
+        rigidbody.AddForce(recoilDirection, ForceMode2D.Impulse);
+        takingDamage = true;
+        invincibilityTimer = 0f;
     }
 
 
@@ -135,14 +171,15 @@ public class WombatController : MonoBehaviour
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
-    void HandlePlayerAttach(Vector3 position)
+    void HandlePlayerAttach(Vector2 position)
     {
         rigidbody.freezeRotation = false;
     }
 
-    void HandlePlayerDetach()
+    void HandlePlayerDetach(Vector2 detachForce)
     {
         rigidbody.freezeRotation = true;
         transform.rotation = Quaternion.identity;
+        rigidbody.AddForce(detachForce, ForceMode2D.Impulse);
     }
 }

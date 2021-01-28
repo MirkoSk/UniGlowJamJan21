@@ -21,7 +21,13 @@ public class Chain : MonoBehaviour
 
     [Header("Chain Controls")]
     [SerializeField] float attachmentPullSpeed = 2f;
+    [SerializeField] float attachSpeedBoost = 5f;
+
+    [Space]
     [SerializeField] float chainBreakDistance = 0.5f;
+
+    [Space]
+    [SerializeField] bool breakChainOnStandstill = true;
     [SerializeField] float chainBreakSpeed = 1f;
     [SerializeField] float chainBreakSpeedDuration = 1f;
 
@@ -38,12 +44,14 @@ public class Chain : MonoBehaviour
     bool chainButtonBeingPressed;
     bool playerStandingStill;
     float timeStandingStill;
+    JumpUpTrigger jumpUpTrigger;
 
     public bool Attached { get { return attached; } }
     public Vector3 AttachmentPoint { get { return attachmentPoint; } }
     public bool ChainButtonBeingPressed { get { return chainButtonBeingPressed; } }
+    public JumpUpTrigger JumpUpTrigger { get => jumpUpTrigger; set => jumpUpTrigger = value; }
 
-    
+
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -62,8 +70,9 @@ public class Chain : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Attach(collision.ClosestPoint(transform.position));
-        
-        // TODO: Start swinging
+
+        // Give the swinging an initial boost
+        player.Rigidbody.AddForce((transform.position - player.transform.position).normalized * attachSpeedBoost, ForceMode2D.Impulse);
 
         // TODO: Activate Stun Trigger
     }
@@ -88,18 +97,23 @@ public class Chain : MonoBehaviour
         if (attached)
         {
             // Detach conditions
-            if (player.Rigidbody.velocity.magnitude <= chainBreakSpeed)
+            if (breakChainOnStandstill && player.Rigidbody.velocity.magnitude <= chainBreakSpeed)
             {
                 timeStandingStill += Time.deltaTime;
                 if (timeStandingStill >= chainBreakSpeedDuration) playerStandingStill = true;
             }
             else timeStandingStill = 0f;
 
-            if (Vector2.Distance(chainOrigin.transform.position, transform.position) <= chainBreakDistance
-                || playerStandingStill)
+            if (Vector2.Distance(chainOrigin.transform.position, transform.position) <= chainBreakDistance)
             {
-                GameEvents.DetachPlayer();
-                Detach();
+                if (jumpUpTrigger) GameEvents.DetachPlayer(jumpUpTrigger.DetachForce);
+                else GameEvents.DetachPlayer(Vector2.zero);
+                Detach(Vector2.zero);
+            }
+            else if (breakChainOnStandstill && playerStandingStill)
+            {
+                GameEvents.DetachPlayer(Vector2.zero);
+                Detach(Vector2.zero);
             }
 
             // Move to attachment point
@@ -130,7 +144,7 @@ public class Chain : MonoBehaviour
         GameEvents.AttachPlayer(transform.position);
     }
 
-    void Detach()
+    void Detach(Vector2 detachForce)
     {
         if (!attached) Debug.LogError("Tried to detach the player while not attached.");
 
@@ -156,6 +170,22 @@ public class Chain : MonoBehaviour
         // Apply velocity
         if (player.FacingRight) rigidbody.velocity = directionVector * movementSpeed;
         else rigidbody.velocity = new Vector2(-directionVector.x, directionVector.y) * movementSpeed;
+
+        // Setup LineRenderer
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, transform.position);
+    }
+
+    public void Initialize(WombatController player, ChainThrower chainOrigin, Vector2 direction)
+    {
+        this.chainOrigin = chainOrigin;
+        this.player = player;
+        player.Chain = this;
+        lifeTime = 0f;
+
+        // Apply velocity
+        rigidbody.velocity = direction * movementSpeed;
 
         // Setup LineRenderer
         lineRenderer.positionCount = 2;
