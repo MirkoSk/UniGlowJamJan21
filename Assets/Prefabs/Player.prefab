@@ -147,7 +147,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 5
   jumpForce: 8
-  maxVelocity: 17
+  midairMovementForce: 1.5
+  maxVelocity: 18
   attachedMoveForce: 5
   fallDownGravityMultiplier: 2
   lowJumpGravityMultiplier: 2

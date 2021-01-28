@@ -9,6 +9,7 @@ public class WombatController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] float movementSpeed = 10f;
     [SerializeField] float jumpForce = 10f;
+    [SerializeField] float midairMovementSpeed = 40f;
     [SerializeField] float maxVelocity = 10f;
 
     [Header("Chain Movement")]
@@ -70,8 +71,14 @@ public class WombatController : MonoBehaviour
 
         // Movement controls on ground
         if (grounded) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
-        // TODO: Movement controls in air
-        else if (false) ;
+        // Movement controls mid-air
+        else if (!grounded && !(chain && chain.Attached))
+        {
+            Vector2 newVelocity = rigidbody.velocity;
+            newVelocity.x = rigidbody.velocity.x + horizontal * midairMovementSpeed;
+            newVelocity.x = Mathf.Clamp(newVelocity.x, -movementSpeed, movementSpeed);
+            rigidbody.velocity = newVelocity;
+        }
         // Attached movement controls
         else if (chain && chain.Attached && !chain.ChainButtonBeingPressed) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
 
