@@ -176,4 +176,20 @@ public class Chain : MonoBehaviour
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, transform.position);
     }
+
+    public void Initialize(WombatController player, ChainThrower chainOrigin, Vector2 direction)
+    {
+        this.chainOrigin = chainOrigin;
+        this.player = player;
+        player.Chain = this;
+        lifeTime = 0f;
+
+        // Apply velocity
+        rigidbody.velocity = direction * movementSpeed;
+
+        // Setup LineRenderer
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, transform.position);
+    }
 }
