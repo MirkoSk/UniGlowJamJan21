@@ -46,7 +46,7 @@ public class ChainThrower : MonoBehaviour
 
 
 
-    void HandlePlayerDetach()
+    void HandlePlayerDetach(Vector2 detachForce)
     {
         chain = null;
     }

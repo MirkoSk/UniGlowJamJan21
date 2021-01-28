@@ -47,6 +47,11 @@ public class Enemy : MonoBehaviour
 
 
 
+    public void ReleaseSoul()
+    {
+        Destroy(gameObject);
+    }
+
     void Flip()
     {
         movingRight = !movingRight;
