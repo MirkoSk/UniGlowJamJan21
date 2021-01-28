@@ -88,10 +88,10 @@ public class WombatController : MonoBehaviour
             // External sources however (hook) can push the player up to his maxVelocity
             if ((rigidbody.velocity.x >= movementSpeed && horizontal < 0)
                 || (rigidbody.velocity.x <= -movementSpeed && horizontal > 0)
-                || (rigidbody.velocity.x >= 0 && rigidbody.velocity.x + horizontal * midairMovementSpeed <= movementSpeed)
-                || (rigidbody.velocity.x < 0 && rigidbody.velocity.x + horizontal * midairMovementSpeed >= -movementSpeed))
+                || (rigidbody.velocity.x >= 0 && rigidbody.velocity.x <= movementSpeed)
+                || (rigidbody.velocity.x < 0 && rigidbody.velocity.x >= -movementSpeed))
             {
-                newVelocity.x = rigidbody.velocity.x + horizontal * midairMovementSpeed;
+                newVelocity.x = Mathf.Clamp(rigidbody.velocity.x + horizontal * midairMovementSpeed, -movementSpeed, movementSpeed);
                 rigidbody.velocity = newVelocity;
             }
         }
