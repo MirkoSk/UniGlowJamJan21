@@ -176,10 +176,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0890dce6eb6ccf4ab9315c1fb8ae505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 30
-  chainLength: 8
+  movementSpeed: 50
+  chainLength: 15
   attachmentPullSpeed: 13
+  attachSpeedBoost: 10
   chainBreakDistance: 0.2
+  breakChainOnStandstill: 0
   chainBreakSpeed: 2
   chainBreakSpeedDuration: 0.5
   lineRenderer: {fileID: 3868084791272008951}
