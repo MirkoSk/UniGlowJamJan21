@@ -1092,7 +1092,7 @@ GameObject:
   - component: {fileID: 1803141993}
   - component: {fileID: 1803141994}
   - component: {fileID: 1803141995}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1206,7 +1206,7 @@ GameObject:
   - component: {fileID: 2001431407}
   - component: {fileID: 2001431406}
   - component: {fileID: 2001431405}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1257,7 +1257,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 3
+  m_Constraints: 7
 --- !u!4 &2001431407
 Transform:
   m_ObjectHideFlags: 0
