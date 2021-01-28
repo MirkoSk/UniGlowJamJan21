@@ -10,7 +10,8 @@ namespace UniGlow.Utility
         public static readonly string INPUT_HORIZONTAL = "Horizontal";
         public static readonly string INPUT_VERTICAL = "Vertical";
         public static readonly string INPUT_JUMP = "Jump";
-        public static readonly string INPUT_CHAIN = "Chain";
+        public static readonly string INPUT_CHAIN_IN = "Chain In";
+        public static readonly string INPUT_CHAIN_OUT = "Chain Out";
         #endregion
 
         #region Tags and Layers

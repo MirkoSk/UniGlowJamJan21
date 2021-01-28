@@ -21,6 +21,7 @@ public class Chain : MonoBehaviour
 
     [Header("Chain Controls")]
     [SerializeField] float attachmentPullSpeed = 2f;
+    [SerializeField] float attachmentPushSpeed = 2f;
     [SerializeField] float attachSpeedBoost = 5f;
 
     [Space]
@@ -41,14 +42,16 @@ public class Chain : MonoBehaviour
     bool attached;
     Vector3 attachmentPoint;
     ChainThrower chainOrigin;
-    bool chainButtonBeingPressed;
+    bool chainInButtonBeingPressed;
+    bool chainOutButtonBeingPressed;
     bool playerStandingStill;
     float timeStandingStill;
     JumpUpTrigger jumpUpTrigger;
+    float chainOriginOffset;
 
     public bool Attached { get { return attached; } }
     public Vector3 AttachmentPoint { get { return attachmentPoint; } }
-    public bool ChainButtonBeingPressed { get { return chainButtonBeingPressed; } }
+    public bool ChainButtonBeingPressed { get { return chainInButtonBeingPressed; } }
     public JumpUpTrigger JumpUpTrigger { get => jumpUpTrigger; set => jumpUpTrigger = value; }
 
 
@@ -88,8 +91,11 @@ public class Chain : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (Input.GetButton(Constants.INPUT_CHAIN)) chainButtonBeingPressed = true;
-        else chainButtonBeingPressed = false;
+        if (Input.GetButton(Constants.INPUT_CHAIN_IN)) chainInButtonBeingPressed = true;
+        else chainInButtonBeingPressed = false;
+
+        if (Input.GetButton(Constants.INPUT_CHAIN_OUT)) chainOutButtonBeingPressed = true;
+        else chainOutButtonBeingPressed = false;
     }
 
     private void FixedUpdate()
@@ -117,10 +123,13 @@ public class Chain : MonoBehaviour
             }
 
             // Move to attachment point
-            if (chainButtonBeingPressed)
+            if (chainInButtonBeingPressed)
             {
-                float chainOriginOffset = Vector2.Distance(chainOrigin.transform.position, player.transform.position);
-                hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y - attachmentPullSpeed * Time.deltaTime, chainOriginOffset, Mathf.Infinity));
+                hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y - attachmentPullSpeed * Time.deltaTime, chainOriginOffset, chainLength));
+            }
+            else if (chainOutButtonBeingPressed)
+            {
+                hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y + attachmentPushSpeed * Time.deltaTime, chainOriginOffset, chainLength));
             }
         }
     }
@@ -139,8 +148,9 @@ public class Chain : MonoBehaviour
         hingeJoint.enabled = true;
 
         rigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
-        
-        
+
+        chainOriginOffset = Vector2.Distance(chainOrigin.transform.position, player.transform.position);
+
         GameEvents.AttachPlayer(transform.position);
     }
 
