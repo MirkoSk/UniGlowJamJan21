@@ -179,6 +179,7 @@ MonoBehaviour:
   movementSpeed: 50
   chainLength: 15
   attachmentPullSpeed: 13
+  attachmentPushSpeed: 8
   attachSpeedBoost: 10
   chainBreakDistance: 0.2
   breakChainOnStandstill: 0
@@ -246,4 +247,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.3

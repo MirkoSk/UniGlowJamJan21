@@ -83,7 +83,7 @@ public class WombatController : MonoBehaviour
         // Movement controls on ground
         if (grounded && !takingDamage) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
         // Movement controls mid-air
-        else if (!grounded && !(chain && chain.Attached))
+        else if (!grounded && !(chain && chain.Attached) && !takingDamage)
         {
             // Apply air friction
             rigidbody.velocity = new Vector2(rigidbody.velocity.x * (1- airFriction), rigidbody.velocity.y);
@@ -131,6 +131,9 @@ public class WombatController : MonoBehaviour
 
     public void TakeDamage(Vector3 enemyPosition)
     {
+        // Grant a window of invincibility when already taking damage
+        if (takingDamage) return;
+
         // Calculate recoil direction
         Vector2 recoilDirection = new Vector2();
         if (enemyPosition.x >= transform.position.x) recoilDirection.x = -damageRecoil.x;

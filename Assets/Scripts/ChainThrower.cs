@@ -31,7 +31,7 @@ public class ChainThrower : MonoBehaviour
         inputDirection = inputDirection.normalized;
         inputAngle = Vector2.Angle(Vector2.up, inputDirection);
 
-        if (Input.GetButtonDown(Constants.INPUT_CHAIN) && chain == null)
+        if (Input.GetButtonDown(Constants.INPUT_CHAIN_IN) && chain == null)
         {
             chain = Instantiate(chainPrefab, transform.position, Quaternion.identity).GetComponent<Chain>();
 
