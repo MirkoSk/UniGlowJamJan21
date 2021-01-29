@@ -18,6 +18,7 @@ public class Chain : MonoBehaviour
     [SerializeField] float movementSpeed = 20f;
     [Tooltip("Max length of the chain in unity units.")]
     [SerializeField] float chainLength = 5f;
+    [SerializeField] GameObject impactEffectPrefab = null;
 
     [Header("Chain Controls")]
     [SerializeField] float attachmentPullSpeed = 2f;
@@ -150,6 +151,9 @@ public class Chain : MonoBehaviour
         rigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
 
         chainOriginOffset = Vector2.Distance(chainOrigin.transform.position, player.transform.position);
+
+        GameObject impactGO = Instantiate(impactEffectPrefab, attachmentPoint, Quaternion.identity);
+        Destroy(impactGO, 1f);
 
         GameEvents.AttachPlayer(transform.position);
     }

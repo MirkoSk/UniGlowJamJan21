@@ -37,7 +37,7 @@ public class AttackMode : MonoBehaviour
         else if (active && timeActive >= minTimeActive && rigidbody.velocity.magnitude < attackModeVelocity)
         {
             active = false;
-            if (particleSystem) particleSystem.Stop();
+            if (particleSystem) particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
     }
 }
