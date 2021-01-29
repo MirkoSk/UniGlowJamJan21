@@ -18,6 +18,7 @@ public class Chain : MonoBehaviour
     [SerializeField] float movementSpeed = 20f;
     [Tooltip("Max length of the chain in unity units.")]
     [SerializeField] float chainLength = 5f;
+    [SerializeField] GameObject impactEffectPrefab = null;
 
     [Header("Chain Controls")]
     [SerializeField] float attachmentPullSpeed = 2f;
@@ -73,7 +74,7 @@ public class Chain : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Attach(collision.ClosestPoint(transform.position));
-
+        
         // Give the swinging an initial boost
         player.Rigidbody.AddForce((transform.position - player.transform.position).normalized * attachSpeedBoost, ForceMode2D.Impulse);
 
@@ -84,7 +85,7 @@ public class Chain : MonoBehaviour
     {
         lifeTime += Time.deltaTime;
         lineRenderer.SetPosition(1, transform.position);
-        if (attached) lineRenderer.SetPosition(0, chainOrigin.transform.position);
+        lineRenderer.SetPosition(0, chainOrigin.transform.position);
 
         if (!attached && movementSpeed * lifeTime >= chainLength)
         {
@@ -151,6 +152,9 @@ public class Chain : MonoBehaviour
 
         chainOriginOffset = Vector2.Distance(chainOrigin.transform.position, player.transform.position);
 
+        GameObject impactGO = Instantiate(impactEffectPrefab, attachmentPoint, Quaternion.LookRotation(Vector3.forward, (Vector2)transform.position - point));
+        Destroy(impactGO, 1f);
+
         GameEvents.AttachPlayer(transform.position);
     }
 
@@ -183,7 +187,7 @@ public class Chain : MonoBehaviour
 
         // Setup LineRenderer
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, chainOrigin.transform.position);
         lineRenderer.SetPosition(1, transform.position);
     }
 
@@ -199,7 +203,7 @@ public class Chain : MonoBehaviour
 
         // Setup LineRenderer
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, chainOrigin.transform.position);
         lineRenderer.SetPosition(1, transform.position);
     }
 }

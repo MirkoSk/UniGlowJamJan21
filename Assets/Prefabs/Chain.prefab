@@ -178,6 +178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 50
   chainLength: 15
+  impactEffectPrefab: {fileID: 6893854794348743429, guid: 9eebc10c2a5a38d43a9970a68880cf27, type: 3}
   attachmentPullSpeed: 13
   attachmentPushSpeed: 8
   attachSpeedBoost: 10
