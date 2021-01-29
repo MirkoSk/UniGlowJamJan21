@@ -74,7 +74,7 @@ public class Chain : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Attach(collision.ClosestPoint(transform.position));
-
+        
         // Give the swinging an initial boost
         player.Rigidbody.AddForce((transform.position - player.transform.position).normalized * attachSpeedBoost, ForceMode2D.Impulse);
 
@@ -152,7 +152,7 @@ public class Chain : MonoBehaviour
 
         chainOriginOffset = Vector2.Distance(chainOrigin.transform.position, player.transform.position);
 
-        GameObject impactGO = Instantiate(impactEffectPrefab, attachmentPoint, Quaternion.identity);
+        GameObject impactGO = Instantiate(impactEffectPrefab, attachmentPoint, Quaternion.LookRotation(Vector3.forward, (Vector2)transform.position - point));
         Destroy(impactGO, 1f);
 
         GameEvents.AttachPlayer(transform.position);
