@@ -5,6 +5,8 @@ using UnityEngine;
 [SelectionBase]
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] protected GameObject deathParticlesPrefab = null;
+
     protected bool movingRight;
     protected new Rigidbody2D rigidbody;
 
@@ -19,6 +21,7 @@ public class Enemy : MonoBehaviour
 
     public void ReleaseSoul()
     {
+        Instantiate(deathParticlesPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 

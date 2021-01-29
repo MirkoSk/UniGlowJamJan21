@@ -14647,6 +14647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce63c1b761cbbe5419377480a5ca2639, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deathParticlesPrefab: {fileID: 7758329503773022027, guid: 25d83d71c9aaecd489943ba5649a3625, type: 3}
   movementSpeed: 10
   groundLayerMask:
     serializedVersion: 2

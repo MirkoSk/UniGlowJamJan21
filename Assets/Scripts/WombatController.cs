@@ -21,7 +21,7 @@ public class WombatController : MonoBehaviour
     [Header("Damage")]
     [SerializeField] Vector2 damageRecoil = new Vector2();
     [SerializeField] float invincibilityDuration = 1f;
-    [SerializeField] SpriteRenderer spriteRenderer = null;
+    [SerializeField] List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
     [SerializeField] Color damageFlashColor = new Color(1, 1, 1, 0.5f);
     [SerializeField] int numberOfFlashes = 3;
     [SerializeField] AttackMode attackMode = null;
@@ -30,6 +30,9 @@ public class WombatController : MonoBehaviour
     [SerializeField] float fallDownGravityMultiplier = 2f;
     [SerializeField] float lowJumpGravityMultiplier = 2f;
     [SerializeField] LayerMask layerMask;
+
+    [Header("Animation")]
+    [SerializeField] Animator animator = null;
 
     new Rigidbody2D rigidbody;
     float horizontal;
@@ -139,6 +142,9 @@ public class WombatController : MonoBehaviour
             if (chain && chain.Attached) GameEvents.DetachPlayer(Vector3.zero);
         }
 
+        if (grounded && horizontal != 0) animator.SetBool("walking", true);
+        else animator.SetBool("walking", false);
+
         // Better jumping with 4 lines of code
         if (!grounded && rigidbody.velocity.y < 0)
         {
@@ -169,8 +175,11 @@ public class WombatController : MonoBehaviour
         recoilDirection.y = damageRecoil.y;
         rigidbody.AddForce(recoilDirection, ForceMode2D.Impulse);
 
-        spriteRenderer.DOColor(damageFlashColor, invincibilityDuration / ((float)numberOfFlashes * 2)).SetLoops(numberOfFlashes * 2, LoopType.Yoyo);
-
+        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        {
+            spriteRenderer.DOColor(damageFlashColor, invincibilityDuration / ((float)numberOfFlashes * 2)).SetLoops(numberOfFlashes * 2, LoopType.Yoyo);
+        }
+        
         takingDamage = true;
         invincibilityTimer = 0f;
     }
