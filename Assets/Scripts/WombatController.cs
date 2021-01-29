@@ -54,6 +54,7 @@ public class WombatController : MonoBehaviour
     public Chain Chain { get { return chain; } set { chain = value; } }
     public bool Invincible { get => takingDamage; }
     public bool AttackModeActive { get => attackMode.Active; }
+    public Animator Animator { get => animator; }
 
 
 
@@ -227,6 +228,7 @@ public class WombatController : MonoBehaviour
     void HandlePlayerAttach(Vector2 position)
     {
         rigidbody.freezeRotation = false;
+        animator.SetBool("hookAttached", true);
     }
 
     void HandlePlayerDetach(Vector2 detachForce)
@@ -234,5 +236,6 @@ public class WombatController : MonoBehaviour
         rigidbody.freezeRotation = true;
         transform.rotation = Quaternion.identity;
         rigidbody.AddForce(detachForce, ForceMode2D.Impulse);
+        animator.SetBool("hookAttached", false);
     }
 }
