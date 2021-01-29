@@ -6,6 +6,7 @@ public class AttackMode : MonoBehaviour
 {
     [SerializeField] float attackModeVelocity = 5f;
     [SerializeField] float minTimeActive = 1f;
+    [SerializeField] float timeToDeactivate = 1f;
 
     [Header("References")]
     [SerializeField] new Rigidbody2D rigidbody = null;
@@ -14,27 +15,29 @@ public class AttackMode : MonoBehaviour
     float velocityLastFrame;
     bool active;
     float timeActive;
+    float timeVelocityBelowThreshold;
 
     public bool Active { get => active; }
 
 
 
-    private void Update()
-    {
-        if (active) timeActive += Time.deltaTime;
-    }
-
     void FixedUpdate()
     {
+        if (active) timeActive += Time.deltaTime;
+
+        if (active && rigidbody.velocity.magnitude < attackModeVelocity) timeVelocityBelowThreshold += Time.deltaTime;
+        else if (active && rigidbody.velocity.magnitude >= attackModeVelocity) timeVelocityBelowThreshold = 0f;
+
         // Just entered attack mode
         if (!active && rigidbody.velocity.magnitude >= attackModeVelocity && velocityLastFrame < attackModeVelocity)
         {
             active = true;
             timeActive = 0f;
-            if (particleSystem) particleSystem.Play();
+            timeVelocityBelowThreshold = 0f;
+            if (particleSystem) particleSystem.Play(true);
         }
         // Leaving attack mode
-        else if (active && timeActive >= minTimeActive && rigidbody.velocity.magnitude < attackModeVelocity)
+        else if (active && timeActive >= minTimeActive && timeVelocityBelowThreshold >= timeToDeactivate && rigidbody.velocity.magnitude < attackModeVelocity)
         {
             active = false;
             if (particleSystem) particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
