@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sprite Light Test
+  m_Name: Liane LeuchtMAT
   m_Shader: {fileID: -6465566751694194690, guid: 114f5b2bb8150d7478b31becb8253da1, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_8114c68098104c75afd4b24d4e93e0e3:
-        m_Texture: {fileID: 2800000, guid: 4782e37fe1741244b8dd31d7546032c0, type: 3}
+        m_Texture: {fileID: -3772604815011789061, guid: f84ea2729e12bb0418638ae233781384, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_9f97ea2ad0c04f6fa0f763b40ac37637_Texture_1:
@@ -41,5 +41,5 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats: []
     m_Colors:
-    - Color_76200118cd694d68b19146e59a2996ac: {r: 0.7058824, g: 0.6901961, b: 0.6901961, a: 0}
+    - Color_76200118cd694d68b19146e59a2996ac: {r: 6.13441, g: 6.13441, b: 6.13441, a: 0}
   m_BuildTextureStacks: []
