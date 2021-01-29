@@ -19,6 +19,11 @@ public class GameManager : MonoBehaviour
         GameEvents.GameOver -= RestartLevel;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
+    }
+
 
 
     public void RestartLevel()
