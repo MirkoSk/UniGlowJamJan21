@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackModeVelocity: 12
   minTimeActive: 1
+  timeToDeactivate: 0.5
   rigidbody: {fileID: 6285835233969862390}
   particleSystem: {fileID: 4457922921330954363}
 --- !u!1 &4457922921330954360
@@ -96,7 +97,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
