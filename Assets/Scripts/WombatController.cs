@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniGlow.Utility;
+using DG.Tweening;
 
 [SelectionBase]
 public class WombatController : MonoBehaviour
@@ -20,6 +21,10 @@ public class WombatController : MonoBehaviour
     [Header("Damage")]
     [SerializeField] Vector2 damageRecoil = new Vector2();
     [SerializeField] float invincibilityDuration = 1f;
+    [SerializeField] SpriteRenderer spriteRenderer = null;
+    [SerializeField] Color damageFlashColor = new Color(1, 1, 1, 0.5f);
+    [SerializeField] int numberOfFlashes = 3;
+    [SerializeField] AttackMode attackMode = null;
 
     [Header("Tweaks")]
     [SerializeField] float fallDownGravityMultiplier = 2f;
@@ -36,10 +41,13 @@ public class WombatController : MonoBehaviour
     Chain chain;
     bool takingDamage;
     float invincibilityTimer;
+    bool jumpingOutOfHook;
 
     public Rigidbody2D Rigidbody { get { return rigidbody; } }
     public bool FacingRight { get { return facingRight; } }
     public Chain Chain { get { return chain; } set { chain = value; } }
+    public bool Invincible { get => takingDamage; }
+    public bool AttackModeActive { get => attackMode.Active; }
 
 
 
@@ -53,12 +61,14 @@ public class WombatController : MonoBehaviour
     {
         GameEvents.PlayerAttached += HandlePlayerAttach;
         GameEvents.PlayerDetached += HandlePlayerDetach;
+        GameEvents.PlayerDamaged += TakeDamage;
     }
 
     private void OnDisable()
     {
         GameEvents.PlayerAttached -= HandlePlayerAttach;
         GameEvents.PlayerDetached -= HandlePlayerDetach;
+        GameEvents.PlayerDamaged -= TakeDamage;
     }
 
     void Update()
@@ -82,11 +92,29 @@ public class WombatController : MonoBehaviour
 
         // Movement controls on ground
         if (grounded && !takingDamage) rigidbody.velocity = new Vector2(horizontal * movementSpeed, rigidbody.velocity.y);
-        // Movement controls mid-air
-        else if (!grounded && !(chain && chain.Attached) && !takingDamage)
+        // Movement controls mid-air when jumping out of hook
+        else if (!grounded && !(chain && chain.Attached) && !takingDamage && jumpingOutOfHook)
         {
             // Apply air friction
             rigidbody.velocity = new Vector2(rigidbody.velocity.x * (1- airFriction), rigidbody.velocity.y);
+
+            Vector2 newVelocity = rigidbody.velocity;
+            // This ensures the player can control himself in midair, but not over the movementSpeed limit
+            // External sources however (hook) can push the player up to his maxVelocity
+            if ((rigidbody.velocity.x >= midairMovementSpeed && horizontal < 0)
+                || (rigidbody.velocity.x <= -midairMovementSpeed && horizontal > 0)
+                || (rigidbody.velocity.x >= 0 && rigidbody.velocity.x <= midairMovementSpeed)
+                || (rigidbody.velocity.x < 0 && rigidbody.velocity.x >= -midairMovementSpeed))
+            {
+                newVelocity.x = Mathf.Clamp(rigidbody.velocity.x + horizontal * midairMovementSpeed, -midairMovementSpeed, midairMovementSpeed);
+                rigidbody.velocity = newVelocity;
+            }
+        }
+        // Movement controls mid-air when jumping from the ground
+        else if (!grounded && !(chain && chain.Attached) && !takingDamage && !jumpingOutOfHook)
+        {
+            // Apply air friction
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x * (1 - airFriction), rigidbody.velocity.y);
 
             Vector2 newVelocity = rigidbody.velocity;
             // This ensures the player can control himself in midair, but not over the movementSpeed limit
@@ -101,11 +129,11 @@ public class WombatController : MonoBehaviour
             }
         }
         // Attached movement controls
-        else if (chain && chain.Attached && !chain.ChainButtonBeingPressed) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
+        else if (!takingDamage && chain && chain.Attached && !chain.ChainButtonBeingPressed) rigidbody.AddForce(Vector2.right * horizontal * attachedMoveForce, ForceMode2D.Force);
 
         grounded = GroundCheck();
 
-        if (jumpPressed && (grounded || (chain && chain.Attached)))
+        if (!takingDamage && jumpPressed && (grounded || (chain && chain.Attached)))
         {
             Jump();
             if (chain && chain.Attached) GameEvents.DetachPlayer(Vector3.zero);
@@ -129,7 +157,7 @@ public class WombatController : MonoBehaviour
 
 
 
-    public void TakeDamage(Vector3 enemyPosition)
+    void TakeDamage(Vector2 enemyPosition)
     {
         // Grant a window of invincibility when already taking damage
         if (takingDamage) return;
@@ -139,17 +167,20 @@ public class WombatController : MonoBehaviour
         if (enemyPosition.x >= transform.position.x) recoilDirection.x = -damageRecoil.x;
         else recoilDirection.x = damageRecoil.x;
         recoilDirection.y = damageRecoil.y;
-        
         rigidbody.AddForce(recoilDirection, ForceMode2D.Impulse);
+
+        spriteRenderer.DOColor(damageFlashColor, invincibilityDuration / ((float)numberOfFlashes * 2)).SetLoops(numberOfFlashes * 2, LoopType.Yoyo);
+
         takingDamage = true;
         invincibilityTimer = 0f;
     }
 
-
-
     void Jump()
     {
         rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y + jumpForce);
+
+        if (chain && chain.Attached) jumpingOutOfHook = true;
+        else jumpingOutOfHook = false;
     }
 
     bool GroundCheck()

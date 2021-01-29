@@ -21,5 +21,22 @@ namespace UniGlow.Utility
         {
             PlayerDetached?.Invoke(detachForce);
         }
+
+        public delegate void DamageTakenHandler(Vector2 enemyPosition);
+        public static event DamageTakenHandler PlayerDamaged;
+
+        public static void DamagePlayer(Vector2 enemyPosition)
+        {
+            PlayerDamaged?.Invoke(enemyPosition);
+        }
+
+        public delegate void GameOverHandler();
+        public static event GameOverHandler GameOver;
+
+        public static void EndGame()
+        {
+            Debug.Log("GAME OVER");
+            GameOver?.Invoke();
+        }
     }
 }

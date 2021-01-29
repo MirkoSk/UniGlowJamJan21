@@ -16,14 +16,14 @@ public class EnemyDamageDealer : MonoBehaviour
             WombatController player = collision.transform.GetComponentInParent<WombatController>();
             
             // Player does damage
-            if (player.Chain && player.Chain.Attached)
+            if (player.AttackModeActive)
             {
                 enemy.ReleaseSoul();
             }
-            // Enemy does damage
-            else
+            // Player takes damage
+            else if (!player.AttackModeActive && !player.Invincible)
             {
-                player.TakeDamage(enemy.transform.position);
+                GameEvents.DamagePlayer(enemy.transform.position);
             }
         }
     }

@@ -84,7 +84,7 @@ public class Chain : MonoBehaviour
     {
         lifeTime += Time.deltaTime;
         lineRenderer.SetPosition(1, transform.position);
-        if (attached) lineRenderer.SetPosition(0, chainOrigin.transform.position);
+        lineRenderer.SetPosition(0, chainOrigin.transform.position);
 
         if (!attached && movementSpeed * lifeTime >= chainLength)
         {
@@ -183,7 +183,7 @@ public class Chain : MonoBehaviour
 
         // Setup LineRenderer
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, chainOrigin.transform.position);
         lineRenderer.SetPosition(1, transform.position);
     }
 
@@ -199,7 +199,7 @@ public class Chain : MonoBehaviour
 
         // Setup LineRenderer
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, chainOrigin.transform.position);
         lineRenderer.SetPosition(1, transform.position);
     }
 }

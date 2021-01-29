@@ -1,5 +1,52 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2124441084248888990
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2475937811670666829}
+  - component: {fileID: 1662689977617164707}
+  m_Layer: 0
+  m_Name: AttackMode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2475937811670666829
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124441084248888990}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6285835233969862388}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1662689977617164707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124441084248888990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e86eef8153397424e8b6d9d6c9fc2e45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackModeVelocity: 12
+  minTimeActive: 1
+  rigidbody: {fileID: 6285835233969862390}
+  particleSystem: {fileID: 0}
 --- !u!1 &5366594338903183680
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,6 +208,7 @@ Transform:
   - {fileID: 6285835232533580486}
   - {fileID: 6309839719894771793}
   - {fileID: 6991562117530808760}
+  - {fileID: 2475937811670666829}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -176,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd32e71c57b7ae4d93395b297caad94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 10
+  movementSpeed: 5
   jumpForce: 8
   midairMovementSpeed: 10
   maxVelocity: 30
@@ -184,6 +232,10 @@ MonoBehaviour:
   attachedMoveForce: 10
   damageRecoil: {x: 5, y: 10}
   invincibilityDuration: 1
+  spriteRenderer: {fileID: 6285835232533580484}
+  damageFlashColor: {r: 1, g: 0, b: 0, a: 0.5019608}
+  numberOfFlashes: 3
+  attackMode: {fileID: 1662689977617164707}
   fallDownGravityMultiplier: 2
   lowJumpGravityMultiplier: 2
   layerMask:
@@ -235,7 +287,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7682418106721684323}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.17, y: 1.59, z: 0}
+  m_LocalPosition: {x: 0.17, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6285835233969862388}
