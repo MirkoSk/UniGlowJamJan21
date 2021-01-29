@@ -34,6 +34,9 @@ public class WombatController : MonoBehaviour
     [Header("Animation")]
     [SerializeField] Animator animator = null;
 
+    [Header("Landing Particles")]
+    [SerializeField] ParticleSystem landingParticles = null;
+
     new Rigidbody2D rigidbody;
     float horizontal;
     [HideInInspector]
@@ -199,6 +202,13 @@ public class WombatController : MonoBehaviour
         if (hit.point != Vector2.zero)
         {
             Debug.DrawLine(transform.position, transform.position + Vector3.down * 0.1f, Color.green);
+
+            // Just landed
+            if (landingParticles && !grounded && rigidbody.velocity.y < 1f && !(chain && chain.Attached))
+            {
+                landingParticles.Play();
+            }
+
             return true;
         }
         else
