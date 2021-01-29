@@ -271,7 +271,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.84985, b: 0.5896226, a: 1}
+      maxColor: {r: 0.7424417, g: 1, b: 0.5882353, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -9849,7 +9849,6 @@ MonoBehaviour:
     m_Bits: 64
   animator: {fileID: 3998311777398984315}
   landingParticles: {fileID: 4570440434358350985}
-  landingParticlesVelocity: 5
 --- !u!50 &6285835233969862390
 Rigidbody2D:
   serializedVersion: 4
