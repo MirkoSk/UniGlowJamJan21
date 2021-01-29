@@ -9,7 +9,7 @@ public class AttackMode : MonoBehaviour
     [SerializeField] float timeToDeactivate = 1f;
 
     [Header("References")]
-    [SerializeField] new Rigidbody2D rigidbody = null;
+    [SerializeField] WombatController wombatController = null;
     [SerializeField] new ParticleSystem particleSystem = null;
 
     float velocityLastFrame;
@@ -25,11 +25,11 @@ public class AttackMode : MonoBehaviour
     {
         if (active) timeActive += Time.deltaTime;
 
-        if (active && rigidbody.velocity.magnitude < attackModeVelocity) timeVelocityBelowThreshold += Time.deltaTime;
-        else if (active && rigidbody.velocity.magnitude >= attackModeVelocity) timeVelocityBelowThreshold = 0f;
+        if (active && wombatController.Rigidbody.velocity.magnitude < attackModeVelocity) timeVelocityBelowThreshold += Time.deltaTime;
+        else if (active && wombatController.Rigidbody.velocity.magnitude >= attackModeVelocity) timeVelocityBelowThreshold = 0f;
 
         // Just entered attack mode
-        if (!active && rigidbody.velocity.magnitude >= attackModeVelocity && velocityLastFrame < attackModeVelocity)
+        if (!active && !wombatController.Invincible && wombatController.Rigidbody.velocity.magnitude >= attackModeVelocity && velocityLastFrame < attackModeVelocity)
         {
             active = true;
             timeActive = 0f;
@@ -37,7 +37,7 @@ public class AttackMode : MonoBehaviour
             if (particleSystem) particleSystem.Play(true);
         }
         // Leaving attack mode
-        else if (active && timeActive >= minTimeActive && timeVelocityBelowThreshold >= timeToDeactivate && rigidbody.velocity.magnitude < attackModeVelocity)
+        else if (active && timeActive >= minTimeActive && timeVelocityBelowThreshold >= timeToDeactivate && wombatController.Rigidbody.velocity.magnitude < attackModeVelocity)
         {
             active = false;
             if (particleSystem) particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);

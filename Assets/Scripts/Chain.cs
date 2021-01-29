@@ -49,6 +49,7 @@ public class Chain : MonoBehaviour
     float timeStandingStill;
     JumpUpTrigger jumpUpTrigger;
     float chainOriginOffset;
+    AudioSource audioSource;
 
     public bool Attached { get { return attached; } }
     public Vector3 AttachmentPoint { get { return attachmentPoint; } }
@@ -59,6 +60,7 @@ public class Chain : MonoBehaviour
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -127,10 +129,16 @@ public class Chain : MonoBehaviour
             if (chainInButtonBeingPressed)
             {
                 hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y - attachmentPullSpeed * Time.deltaTime, chainOriginOffset, chainLength));
+                player.Animator.SetInteger("hookPull", 1);
             }
             else if (chainOutButtonBeingPressed)
             {
                 hingeJoint.connectedAnchor = new Vector2(hingeJoint.connectedAnchor.x, Mathf.Clamp(hingeJoint.connectedAnchor.y + attachmentPushSpeed * Time.deltaTime, chainOriginOffset, chainLength));
+                player.Animator.SetInteger("hookPull", -1);
+            }
+            else
+            {
+                player.Animator.SetInteger("hookPull", 0);
             }
         }
     }
@@ -154,6 +162,7 @@ public class Chain : MonoBehaviour
 
         GameObject impactGO = Instantiate(impactEffectPrefab, attachmentPoint, Quaternion.LookRotation(Vector3.forward, (Vector2)transform.position - point));
         Destroy(impactGO, 1f);
+        audioSource.Play();
 
         GameEvents.AttachPlayer(transform.position);
     }

@@ -18,6 +18,7 @@ public class EnemyDamageDealer : MonoBehaviour
             // Player does damage
             if (player.AttackModeActive)
             {
+                EZCameraShake.CameraShaker.Instance.ShakeOnce(enemy.ShakeMagnitude, enemy.ShakeRoughness, enemy.ShakeFadeIn, enemy.ShakeFadeOut);
                 enemy.ReleaseSoul();
             }
             // Player takes damage
