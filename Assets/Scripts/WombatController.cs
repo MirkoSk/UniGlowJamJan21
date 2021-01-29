@@ -25,6 +25,7 @@ public class WombatController : MonoBehaviour
     [SerializeField] Color damageFlashColor = new Color(1, 1, 1, 0.5f);
     [SerializeField] int numberOfFlashes = 3;
     [SerializeField] AttackMode attackMode = null;
+    [SerializeField] AudioClip damageSound = null;
 
     [Header("Tweaks")]
     [SerializeField] float fallDownGravityMultiplier = 2f;
@@ -48,6 +49,7 @@ public class WombatController : MonoBehaviour
     bool takingDamage;
     float invincibilityTimer;
     bool jumpingOutOfHook;
+    AudioSource audioSource;
 
     public Rigidbody2D Rigidbody { get { return rigidbody; } }
     public bool FacingRight { get { return facingRight; } }
@@ -62,6 +64,7 @@ public class WombatController : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.gravityScale = 1f;
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -183,6 +186,8 @@ public class WombatController : MonoBehaviour
         {
             spriteRenderer.DOColor(damageFlashColor, invincibilityDuration / ((float)numberOfFlashes * 2)).SetLoops(numberOfFlashes * 2, LoopType.Yoyo);
         }
+
+        audioSource.PlayOneShot(damageSound);
         
         takingDamage = true;
         invincibilityTimer = 0f;
