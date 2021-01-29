@@ -26,6 +26,7 @@ public class WombatController : MonoBehaviour
     [SerializeField] int numberOfFlashes = 3;
     [SerializeField] AttackMode attackMode = null;
     [SerializeField] AudioClip damageSound = null;
+    [SerializeField] AudioClip landingSound = null;
 
     [Header("Tweaks")]
     [SerializeField] float fallDownGravityMultiplier = 2f;
@@ -213,6 +214,7 @@ public class WombatController : MonoBehaviour
             if (landingParticles && !grounded && rigidbody.velocity.y < 1f && !(chain && chain.Attached))
             {
                 landingParticles.Play();
+                audioSource.PlayOneShot(landingSound);
             }
 
             return true;

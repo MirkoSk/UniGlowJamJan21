@@ -9844,6 +9844,7 @@ MonoBehaviour:
   numberOfFlashes: 3
   attackMode: {fileID: 1662689977617164707}
   damageSound: {fileID: 8300000, guid: 426ad2885b575274f871218ddb876580, type: 3}
+  landingSound: {fileID: 8300000, guid: b92211fcb7dcfa442a2373df0e35cc30, type: 3}
   fallDownGravityMultiplier: 2
   lowJumpGravityMultiplier: 2
   layerMask:
